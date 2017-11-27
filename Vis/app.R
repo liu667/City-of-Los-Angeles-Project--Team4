@@ -2,24 +2,31 @@ library(shiny)
 library(shinythemes)
 
 ui <-navbarPage(
-  theme = shinytheme("paper"),
-    title = "City fo Los Angeles Homeless Project",
+  theme = shinytheme("journal"),
+    title = "LA City Project",
 
                 tabPanel("Introduction",
                          fluidPage(
-                           h1("City of Los Angeles Homeless Overview"),
-                           tags$blockquote("123"),
-                           #plain text in paragraph
-                           p("This is the body."),
-                           #Single line break
                            br(),
-                           #bold text in paragraph
-                           tags$b("This is the bold text"),
-                           div("div creates segments of text with a similar style. 
-                               This division of text is all blue because I passed the argument 'style = color:blue' to div",
-                               style = "color:blue"),
+                           br(),
+                           tags$blockquote("Overviews, Goals, and Data Sets"),
+                           #text in paragraph
+                           p(tags$b("Overviews:"),"In 2017, there are more than ", tags$em("50,000", style = "color:blue"),
+                             "on the street, and about", tags$em("75%", style = "color:blue"),"of homeless people are unsheltered.
+
+                             "),
+                           img(src = "homeless1.jpg", aligh = "left"),
+                           p(tags$b("Project Goals:"), "Our goal is to measure the homeless density in the greater Los Angeles Area,
+                             identify potential risks and health issues towards homeless people,
+                             figure up the services provided by the governments and instituions,
+                             and provide implantable recommendations for the city of Los Angeles on the homeless issues."),
+
                            
-                           img(src='homeless.jpg', align = "right"),
+                           img(src='homeless.jpg', width = 500, height = 300, align = "left"),
+                           #leave some room here
+                           br(),
+                           tags$blockquote("Data Sets"),
+                           theme = "bootstrap.css",
                            
                            
                            fluidRow(
@@ -39,8 +46,12 @@ ui <-navbarPage(
                            tabPanel("Crime Data"),
                            
                            tabPanel("Shelter Data")),
+                tabPanel("Risks"),
   
-                tabPanel("Recommendations")
+                tabPanel("Recommendations"),
+  position = "fixed-top",
+  header = "City of Los Angeles Homeless Project"
+  
 )
 
 
