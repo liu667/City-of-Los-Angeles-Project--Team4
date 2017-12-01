@@ -3,11 +3,12 @@ library(shinythemes)
 library(lubridate)
 library(plotly)
 library(dplyr)
+library(leaflet)
 
 
 
 ui <- navbarPage(
-  theme = shinytheme("paper"),
+  theme = shinytheme("flatly"),
   title = "City fo Los Angeles Homeless Project",
   
   tabPanel("Introduction",
@@ -42,9 +43,6 @@ ui <- navbarPage(
   navbarMenu("Data Analysis",
              
              tabPanel("Homeless Data", fluidPage(
-               br(),
-               br(),
-               
                sidebarLayout(
                  mainPanel(leafletOutput("tot_map"),class = "panel panel-default",width = "100%", height = "100%"),
                            absolutePanel(id = "homelesscontrol",fixed = TRUE,
@@ -68,35 +66,46 @@ ui <- navbarPage(
              
              
              tabPanel("311 Call Data", fluidPage(
+              
+          
                
                sidebarLayout(
+                 
                  mainPanel( 
                    leafletOutput("call"),class = "panel panel-default",width = "100%", height = "100%"),
-                   absolutePanel(id = "311control",fixed = TRUE,
-                                          draggable = TRUE, top = "auto", left = "auto", right = 20, bottom = "auto",
-                                          width = 400, height = "auto",
+                   absolutePanel(id = "311control",
+                                          draggable = TRUE, top = "auto", left = 50, right = "auto", bottom = "auto",
+                                          width = 800, height = "auto",
                                           h4("Create maps with information from 311call dataset."),
                                           sliderInput("week", 
                                                       label = "Week:",
-                                                      min = 1, max = 44, value = 5)
-                      ####         ###  #,plotlyOutput("device311"),
-                       ####         # plotOutput("month311"),
+                                                      min = 1, max = 44, value = 5, width = 800)
                                  
-                 )
-                   
+                   )
                 
                         
                )
-             )),
+             ),
+             fluidRow(br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                   
+                      plotlyOutput("device311"),
+                        plotOutput("month311"))),
              
              tabPanel("Crime Data", fluidPage(
                sidebarLayout(
                  mainPanel(leafletOutput("crime_map"),
-     #####                      #plotOutput("hour_crime"),
+                  
                            class = "panel panel-default",width = "100%", height = "100%"),
-                 absolutePanel(id = "crimecontrol",fixed = TRUE,
-                               draggable = TRUE, top = "auto", left = "auto", right = 20, bottom = "auto",
-                               width = 400, height = "auto",
+                 absolutePanel(id = "crimecontrol",
+                               draggable = TRUE, top = "auto", left = 50, right = "auto", bottom = "auto",
+                               width = 800, height = "auto",
                                
                                
                                h4("Explore number of crimes by Community or by Tract"),
@@ -108,20 +117,27 @@ ui <- navbarPage(
                  )
                 )
                 
+               ), fluidRow(br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),
+                           br(),plotOutput("hour_crime"),
+                           column(6, h5("Type insights here.")),
+                           column(6)
+               )
+                
                ),
-     fluidRow(
-       column(6, h5("Type insights here.")),
-       column(6)
-     )
-               
-             ),
+
              
-             tabPanel("Shelter Data", fluidPage(
+             tabPanel("Shelter Data", 
+                      fluidPage(
                  mainPanel(leafletOutput("shelter"),
                            class = "panel panel-default",width = "100%", height = "100%"),##why no use!!!
                 helpText("Zoom in and Zoom out to see more specific distributions of shelters")
-               
-               
+             
              ),
              fluidRow(
                column(6, h5("Type insights here.")),
@@ -129,32 +145,65 @@ ui <- navbarPage(
              ))),
   
   navbarMenu("Risk Measurement",
+             tabPanel("Unsheltered Severity",
              
-             
-             tabPanel("Unsheltered Severity",fluidPage(
-               mainPanel(plotOutput("severetop"),
-                         plotOutput("severebottom"),
-                         plotOutput("mymap"))
+            fluidPage(
+              
+               fluidRow(
+                 column(7,plotOutput("severetop", width = 1000, height = "400px")),
+                 column(5,absolutePanel(
+                   id ="unshelteredseverity",
+                   top = "auto", left = "auto", right = 50, bottom = "auto",
+                   width = 40, height = "auto",
+                   h4("type insights here11"))
+              
              )),
-             
-  
-             tabPanel("Homeless Density", fluidPage(
-               p("Density = total homeless people/ area"),
-               mainPanel(leafletOutput("tot_density"))
+
+
+             fluidRow(
+               column(7,plotOutput("severebottom",width = 1000, height = "400px")),
+               column(5,absolutePanel(
+                 id ="unshelteredseverity",
+                 top = "auto", left = "auto", right = 50, bottom = "auto",
+                 width = 40, height = "auto",
+                 h4("type insights here122"))
              )),
+               
+             fluidRow(
+               column(7,plotOutput("mymap",width = 1000, height = "400px")),
+               column(5,
+                  absolutePanel(
+                 id ="unshelteredseverity",
+                 top = "auto", left = "auto", right = 50, bottom = "auto",
+                 width = 40, height = "auto",
+                 h4("type insights here33"))
+                 ))
              
-             tabPanel("Crime Density", fluidPage(
-               mainPanel(leafletOutput("crimedensity"))
-             ))
-             
-  ),
-             
+            )
+            ),
              
   
-  
-  
-  tabPanel("Recommendations")
-)
+            tabPanel("Homeless Density", fluidPage(
+              mainPanel(leafletOutput("tot_density"),
+                        class = "panel panel-default",width = "100%", height = "100%"
+                       ),
+              helpText("Density = Total Homeless Population/ Area of District (Square Mile)"),
+              fluidRow(
+                column(6, h5("Type insights here.")),
+                column(6)
+            ))),
+             
+      tabPanel("Crime Density", fluidPage(
+               mainPanel(leafletOutput("crimedensity"),
+                         class = "panel panel-default",width = "100%", height = "100%"),
+             
+             fluidRow(
+               column(6, h5("Type insights here.")),
+               column(6))))),
+      
+      tabPanel("Recommendations")
+  )
+
 
 
 server <- function(input, output, session){
@@ -504,7 +553,7 @@ server <- function(input, output, session){
       addLegend(pal = pal, 
                 values = commudf.polygon$Density, 
                 position = "bottomright", 
-                title = "Density of Homeless People by Distrit")
+                title = "Density of Homeless People by District")
   }) 
 
   
@@ -591,7 +640,7 @@ server <- function(input, output, session){
   ##        Number of shelters in each city
   "unsheltered15-16" = left_join(unsheltered2016,unsheltered2015,by = "City")
   "unsheltered15-17" = left_join(`unsheltered15-16`,unsheltered2017,by ="City")%>%
-    select(City = City,"2015_perc" = unsheltered_perc_15,
+    dplyr::select(City = City,"2015_perc" = unsheltered_perc_15,
            "2015_num" = unsheltered_num_15,
            "2016_perc" = unsheltered_perc_16,
            "2016_num" = unsheltered_num_16,
@@ -611,7 +660,7 @@ server <- function(input, output, session){
            changeInSeverity = ifelse(is.na(`15_severity`),
                                      `17_severity`-`16_severity`,
                                      `17_severity`-`15_severity`))%>%
-    select(City,`15_severity`,`16_severity`,`17_severity`,changeInSeverity)%>%
+    dplyr::select(City,`15_severity`,`16_severity`,`17_severity`,changeInSeverity)%>%
     arrange(changeInSeverity)
   
   severityIncTop10 = unsheltered_severity%>%
@@ -643,13 +692,13 @@ server <- function(input, output, session){
     
     ggplot(severityDecTop10, aes(x=reorder(City,decrease),y=decrease))+
       geom_col(stats = "identity",fill = "lightblue")+coord_flip()+
-      geom_text(aes(label=round(changeInSeverity,digits = 0)),position = position_nudge(x=0,y=1.5))+
+      geom_text(aes(label=round(changeInSeverity,digits = 0)),position = position_nudge(x=0,y=5))+
       ylab("Decrease in Unsheltered Severity")+guides(fill=FALSE)+
       xlab("City")+
       ggtitle("Top 10 Cities with Greatest DECREASE in Unsheltered Severity")+
       theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
             panel.background= element_blank(), axis.line = element_line(colour = "black"))+
-      theme(plot.title = element_text(face = "bold",size = 14))+
+      theme(plot.title = element_text(face = "bold",size = 15))+
       theme(axis.title = element_text(size = 14))
     
   })
