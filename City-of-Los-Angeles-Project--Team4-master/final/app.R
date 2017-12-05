@@ -204,9 +204,10 @@ ui <- navbarPage(
                 column(6)
             ))),
              
-      tabPanel("Crime Density", fluidPage(
+      tabPanel("Crime Rate", fluidPage(
                mainPanel(leafletOutput("crimedensity"),
                          class = "panel panel-default",width = "100%", height = "100%"),
+               helpText("Density = Total Crime Number/ Total Homeless People"),
              
              fluidRow(
                column(6, h5("Type insights here.")),
@@ -226,18 +227,16 @@ ui <- navbarPage(
                  h3("Recommendations:"),
                  p("1. Build Affordable Housing:", tags$ul(tags$li("in high homeless density area"), tags$li("at publicly owned vacant properties"),
                                                            tags$li("build more “tiny houses” for the homeless"))), 
-                 p("2. Build more shelters/ homeless services", tags$ul(tags$li("similar to current shelters/ services"), tags$li("imitate the operations/services/ success shelters 
+                 p("2. Build more shelters/ homeless services", tags$ul(tags$li("similar to current shelters/ services"), 
+                                                                        tags$li("imitate the operations/services/ success shelters 
                                                                                                                                             and open branches in severe areas 
                                                                                                                                             (identified by the data -- 
                                                                                                                                             those area with greatest decrease 
                                                                                                                                             in severity and look at their shelter services):focus on career training, job seeking, and mental issue consulting"))),
                  p("3. Easier access to shelters and services", tags$ul(tags$li("only 16% of homeless people seek local services"),
-                                                                        tags$li("call center points at local stores (7-11,Walgreens, CVS, etc.)", tags$ul(tags$li("provide
-                                                                                                                                                                            homeless people with call services
-                                                                                                                                                                            and application services to local shelters"),
-                                                                                                                                                          tags$li("basic medical needs at local pharmacies at low charges
-                                                                                                                                                                            (drugs for people suffering from depression,mental illness,
-                                                                                                                                                                            etc.)"))))),
+                                                                        tags$li("call center points at local stores (7-11,Walgreens, CVS, etc.)", 
+                                                                tags$ul(tags$li("provide homeless people with call services and application services to local shelters"),
+                                                                        tags$li("basic medical needs at local pharmacies at low charges (drugs for people suffering from depression,mental illness,etc.)"))))),
                  p("4. Employment", tags$ul(tags$li("recruit people from previous success shelters to to help build new shelters(construction workers, administrative staff, etc.))",
                                                     tags$li("Buddy Program: connect previous homeless people with new homeless people. People escaped from homeless can introduce job opportunities and way to combat to new homeless people. ")))
                    
@@ -652,7 +651,7 @@ server <- function(input, output, session){
       addLegend(pal = pal, 
                 values = crimedf.polygon$density, 
                 position = "bottomright", 
-                title = "Density of Crime by Distrit")
+                title = "Density of Crime by District")
     
   }) 
   
