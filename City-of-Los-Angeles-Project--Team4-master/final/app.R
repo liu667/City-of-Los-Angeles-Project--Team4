@@ -20,14 +20,14 @@ ui <- navbarPage(
              p(tags$b("Overviews:"),"In 2017, there are more than ", tags$em("50,000", style = "color:blue"),
                "on the street, and about", tags$em("75%", style = "color:blue"),"of homeless people are unsheltered.
                "),
-             img(src = "homeless1.jpg", aligh = "left"),
+             img(src = "homeless1.png", aligh = "left"),
              p(tags$b("Project Goals:"), "Our goal is to measure the homeless density in the greater Los Angeles Area,
                identify potential risks and health issues towards homeless people,
                figure up the services provided by the governments and instituions,
                and provide implantable recommendations for the city of Los Angeles on the homeless issues."),
              
              
-             img(src='homeless.jpg', width = 500, height = 300, align = "left"),
+             img(src='homeless.png', width = 500, height = 300, align = "left"),
              #leave some room here
              br(),
              tags$blockquote("Data Sets"),
@@ -53,8 +53,8 @@ ui <- navbarPage(
                                h4("Explore the homeless by Tract or by Council District"),
                                selectInput(inputId = "crime_dataset",
                                            label = "DATASETS",
-                                           choices = list("By Community", "By Tract"),
-                                           selected = "By Community")
+                                           choices = list("By District", "By Tract"),
+                                           selected = "By District")
                  )
                  
                ) 
@@ -112,8 +112,8 @@ ui <- navbarPage(
                                
                    selectInput(inputId = "dataset",
                                label = "DATASETS",
-                               choices = list("By Community", "By Tract"),
-                               selected = "By Community")
+                               choices = list("By District", "By Tract"),
+                               selected = "By District")
                  )
                 )
                 
@@ -158,7 +158,18 @@ ui <- navbarPage(
                    h4("type insights here11"))
               
              )),
-
+             
+             fluidRow(
+               column(7,plotOutput("mymap",width = 1000, height = "400px")),
+               column(5,
+                      absolutePanel(
+                        id ="unshelteredseverity",
+                        top = "auto", left = "auto", right = 50, bottom = "auto",
+                        width = 40, height = "auto",
+                        h4("type insights here33"))
+               ))
+             
+            ),
 
              fluidRow(
                column(7,plotOutput("severebottom",width = 1000, height = "400px")),
@@ -170,7 +181,7 @@ ui <- navbarPage(
              )),
                
              fluidRow(
-               column(7,plotOutput("mymap",width = 1000, height = "400px")),
+               column(7,plotOutput("decmap",width = 1000, height = "400px")),
                column(5,
                   absolutePanel(
                  id ="unshelteredseverity",
@@ -180,7 +191,7 @@ ui <- navbarPage(
                  ))
              
             )
-            ),
+            ,
              
   
             tabPanel("Homeless Density", fluidPage(
@@ -201,8 +212,41 @@ ui <- navbarPage(
                column(6, h5("Type insights here.")),
                column(6))))),
       
-      tabPanel("Recommendations")
-  )
+      tabPanel("Recommendations",
+               fluidPage(
+                 br(),
+                 br(),
+                 h3("Causes of Homeless:"),
+                 p(tags$ul(
+                   tags$li("povery: lack of affordable housing"), 
+                   tags$li("mental illness:discharged from mental hospitals"), 
+                   tags$li("released from the criminal justice system"),
+                   tags$li("domestic violence"))
+                 ),
+                 h3("Recommendations:"),
+                 p("1. Build Affordable Housing:", tags$ul(tags$li("in high homeless density area"), tags$li("at publicly owned vacant properties"),
+                                                           tags$li("build more “tiny houses” for the homeless"))), 
+                 p("2. Build more shelters/ homeless services", tags$ul(tags$li("similar to current shelters/ services"), tags$li("imitate the operations/services/ success shelters 
+                                                                                                                                            and open branches in severe areas 
+                                                                                                                                            (identified by the data -- 
+                                                                                                                                            those area with greatest decrease 
+                                                                                                                                            in severity and look at their shelter services):focus on career training, job seeking, and mental issue consulting"))),
+                 p("3. Easier access to shelters and services", tags$ul(tags$li("only 16% of homeless people seek local services"),
+                                                                        tags$li("call center points at local stores (7-11,Walgreens, CVS, etc.)", tags$ul(tags$li("provide
+                                                                                                                                                                            homeless people with call services
+                                                                                                                                                                            and application services to local shelters"),
+                                                                                                                                                          tags$li("basic medical needs at local pharmacies at low charges
+                                                                                                                                                                            (drugs for people suffering from depression,mental illness,
+                                                                                                                                                                            etc.)"))))),
+                 p("4. Employment", tags$ul(tags$li("recruit people from previous success shelters to to help build new shelters(construction workers, administrative staff, etc.))",
+                                                    tags$li("Buddy Program: connect previous homeless people with new homeless people. People escaped from homeless can introduce job opportunities and way to combat to new homeless people. ")))
+                   
+                   
+                   
+                   
+                 ))
+      ))
+
 
 
 
@@ -210,7 +254,7 @@ server <- function(input, output, session){
   
   
   datasets <- observe({
-    if(input$crime_dataset == "By Community"){
+    if(input$crime_dataset == "By District"){
   
       
       renderTable ({total_commu = data_census17_tract %>%
@@ -371,7 +415,7 @@ server <- function(input, output, session){
   
 ##### Crime list  
   datasets <- observe({
-    if(input$crime_dataset == "By Community"){
+    if(input$crime_dataset == "By District"){
       
     
       renderTable ({cd_crime = data_crime %>%
@@ -500,8 +544,8 @@ server <- function(input, output, session){
     leaflet(sp_lashelter) %>%
       addTiles() %>%
       addPolygons(data = community_map1,
-                  color = "BLUE", 
-                  fillOpacity = 0.5, 
+                  color = "lightblue", 
+                  fillOpacity = 0.3, 
                   weight = 1, 
                   smoothFactor = 1) %>%
       addMarkers(lng=la_shelter[,1], lat=la_shelter[,2], popup="shelters",clusterOptions = markerClusterOptions())
@@ -510,11 +554,16 @@ server <- function(input, output, session){
   })
  
   
-####total density
+  ####total density
   
-  community_map = fortify(community_map1, region = "DISTRICT")
-  communitymap$DISTRICT = as.numeric(communitymap$DISTRICT)
+  #ommunity_map = fortify(community_map1, region = "DISTRICT")
+  #communitymap$DISTRICT = as.numeric(communitymap$DISTRICT)
+  #communitymap$SQ_MI = as.numeric(communitymap$SQ_MI)
+  
+  communitymap$DISTRICT = as.character(communitymap$DISTRICT)
+  data_census17_tract$CD = as.character(data_census17_tract$CD)
   communitymap$SQ_MI = as.numeric(communitymap$SQ_MI)
+  total_commu$CD = as.character(total_commu$CD)
   total_commu = data_census17_tract %>%
     group_by(CD) %>%
     summarise(Number = sum(totPeople)) %>%
@@ -535,18 +584,19 @@ server <- function(input, output, session){
   commusp.polygon<-SpatialPolygons(commupolygons)
   commudf.polygon<-SpatialPolygonsDataFrame(commusp.polygon,
                                             data=data.frame(row.names=commuid, community1))
-  pal <- colorNumeric(
-    palette = "Blues",
-    domain = commudf.polygon$Density
-  )
+  
   
   output$tot_density <- renderLeaflet({
+    pal <- colorNumeric(
+      palette = "Blues",
+      domain = commudf.polygon$Density
+    )
     
     leaflet()%>%
       addTiles() %>%
       addPolygons(data = commudf.polygon,
                   fillColor = ~pal(Density),
-                  color = "#5297A8", 
+                  ##color = "#5297A8", 
                   fillOpacity = 0.8, 
                   weight = 1, 
                   smoothFactor = 1)%>%
@@ -640,7 +690,7 @@ server <- function(input, output, session){
   ##        Number of shelters in each city
   "unsheltered15-16" = left_join(unsheltered2016,unsheltered2015,by = "City")
   "unsheltered15-17" = left_join(`unsheltered15-16`,unsheltered2017,by ="City")%>%
-    dplyr::select(City = City,"2015_perc" = unsheltered_perc_15,
+    select(City = City,"2015_perc" = unsheltered_perc_15,
            "2015_num" = unsheltered_num_15,
            "2016_perc" = unsheltered_perc_16,
            "2016_num" = unsheltered_num_16,
@@ -660,7 +710,7 @@ server <- function(input, output, session){
            changeInSeverity = ifelse(is.na(`15_severity`),
                                      `17_severity`-`16_severity`,
                                      `17_severity`-`15_severity`))%>%
-    dplyr::select(City,`15_severity`,`16_severity`,`17_severity`,changeInSeverity)%>%
+    select(City,`15_severity`,`16_severity`,`17_severity`,changeInSeverity)%>%
     arrange(changeInSeverity)
   
   severityIncTop10 = unsheltered_severity%>%
@@ -692,31 +742,33 @@ server <- function(input, output, session){
     
     ggplot(severityDecTop10, aes(x=reorder(City,decrease),y=decrease))+
       geom_col(stats = "identity",fill = "lightblue")+coord_flip()+
-      geom_text(aes(label=round(changeInSeverity,digits = 0)),position = position_nudge(x=0,y=5))+
+      geom_text(aes(label=round(changeInSeverity,digits = 0)),position = position_nudge(x=0,y=1.5))+
       ylab("Decrease in Unsheltered Severity")+guides(fill=FALSE)+
       xlab("City")+
       ggtitle("Top 10 Cities with Greatest DECREASE in Unsheltered Severity")+
       theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
             panel.background= element_blank(), axis.line = element_line(colour = "black"))+
-      theme(plot.title = element_text(face = "bold",size = 15))+
+      theme(plot.title = element_text(face = "bold",size = 14))+
       theme(axis.title = element_text(size = 14))
     
   })
   
-####severity map
+  ####severity map
   severityDecTop10 = unsheltered_severity%>%
     arrange(changeInSeverity)%>%
     slice(1:10)%>%
     mutate(decrease = changeInSeverity*-1)
   
-  ## getting lon and lat for Top INC Cities
-  severityIncTop10$City = paste(severityIncTop10$City,",CA")
-  severityIncTop10$City = str_replace(severityIncTop10$City,"Unincorporated","")
-  SeverityIncCoords = geocode(severityIncTop10$City)
-  severityIncCoords = SeverityIncCoords%>%
-    mutate(City = severityIncTop10$City)%>%
-    mutate(Rank = c(10:1))
-  severityIncTop10 = full_join(severityIncTop10,severityIncCoords,by = "City")
+  ## getting lon and lat for Top DEC& INC Cities
+  severityDecTop10$City = paste(severityDecTop10$City,",CA")
+  severityDecTop10$City = str_replace(severityDecTop10$City,"Unincorporated","")
+  SeverityDecCoords = geocode(severityDecTop10$City)
+  SeverityDecCoords = SeverityDecCoords%>%
+    mutate(City = severityDecTop10$City)%>%
+    mutate(Rank = c(1:10))
+  severityDecTop10 = full_join(severityDecTop10,SeverityDecCoords,by = "City")
+  
+  
   
   #### GRAPH ## Spatial Map of Top DEC Cities
   
@@ -735,7 +787,37 @@ server <- function(input, output, session){
       theme(plot.title = element_text(face = "bold",size = 12))+
       theme(axis.title = element_text(size = 14))
   })
- 
+  
+  #### GRAPH ## Spatial Map of Top INC Cities
+  severityIncTop10 = unsheltered_severity%>%
+    arrange(changeInSeverity)%>%
+    top_n(10)
+  
+  
+  severityIncTop10$City = paste(severityIncTop10$City,",CA")
+  severityIncTop10$City = str_replace(severityIncTop10$City,"Unincorporated","")
+  SeverityIncCoords = geocode(severityIncTop10$City)
+  severityIncCoords = SeverityIncCoords%>%
+    mutate(City = severityIncTop10$City)%>%
+    mutate(Rank = c(10:1))
+  severityIncTop10 = full_join(severityIncTop10,severityIncCoords,by = "City") 
+  
+  output$decmap<- renderPlot({
+    LAMap_zoom = get_map("Santa Monica",zoom = 9,maptype = "terrain")
+    ggmap(LAMap_zoom)+
+      geom_point(data = severityIncTop10,
+                 aes(x=lon,y=lat,size = severityIncTop10$changeInSeverity*30,color = "red"))+
+      geom_text(data = severityIncTop10,aes(x=lon,y=lat,label=City,size = 50))+
+      scale_color_manual(values = "darkred")+
+      theme(legend.position = "none")+
+      ggtitle("Location of Top Cities with Greatest Increase in Unsheltered Severity")+
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+            panel.background= element_blank(), axis.line = element_line(colour = "black"))+
+      theme(plot.title = element_text(face = "bold",size = 12))+
+      theme(axis.title = element_text(size = 14))
+  })
+  
+  
   
   }
   

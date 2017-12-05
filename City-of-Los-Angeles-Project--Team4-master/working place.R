@@ -28,6 +28,14 @@ community_map = fortify(community_map1, region = "DISTRICT")
 communitymap = as.data.frame(community_map1)
 tract_map = readOGR("la_city_independent_analysis/data/raw_data/CENSUS_TRACTS_2010.zip_unzipped/CENSUS_TRACTS_2010.shp")
 tract_map2 = spTransform(tract_map, CRS("+proj=longlat +datum=WGS84"))
+tract_map = fortify(tract_map2,region = "CT10")
+tract_map$id = as.numeric(tract_map$id)
+
+total_commu$CD = as.character(total_commu$CD)
+communitymap$DISTRICT = as.character(communitymap$DISTRICT)
+data_census17_tract$CD = as.character(data_census17_tract$CD)
+communitymap$SQ_MI = as.numeric(communitymap$SQ_MI)
+total_commu$CD = as.character(total_commu$CD)
 
 polyFunc<-function(groupname, dat){
   poly<-filter(dat, id==groupname) %>%
@@ -123,17 +131,8 @@ data_311$Week = week(data_311$CREATEDDATE)
  severityIncTop10 = unsheltered_severity%>%
    dplyr::arrange(changeInSeverity)%>%
     top_n(10)
-  ggplot(severityIncTop10,aes(x=reorder(City,changeInSeverity),
-                              y=changeInSeverity))+
-    geom_col(stat = "identity",fill = "lightblue")+coord_flip()+
-    geom_text(aes(label=round(changeInSeverity,digits = 0)),position = position_nudge(x=0,y=5))+
-    ylab("Increase in Unsheltered Severity")+guides(fill = FALSE)+
-    xlab("City")+
-    ggtitle("Top 10 Cities with Greateset INCREASE in Unshltered Severity")+
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-          panel.background= element_blank(), axis.line = element_line(colour = "black"))+
-    theme(plot.title = element_text(face = "bold",size = 15))+
-    theme(axis.title = element_text(size = 14))
+ 
+
   
 
 
@@ -141,3 +140,5 @@ data_311$Week = week(data_311$CREATEDDATE)
 
 
 
+
+  
