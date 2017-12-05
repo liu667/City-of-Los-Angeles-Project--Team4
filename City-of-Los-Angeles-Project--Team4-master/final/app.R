@@ -6,39 +6,52 @@ library(dplyr)
 library(leaflet)
 
 
-
-ui <- navbarPage(
+ui <-navbarPage(
   theme = shinytheme("flatly"),
-  title = "City fo Los Angeles Homeless Project",
+  title = "LA City Homelessness Project",
   
   tabPanel("Introduction",
            fluidPage(
              br(),
              br(),
-             tags$blockquote("Overviews, Goals, and Data Sets"),
+             h3("Overviews and Goals"),
              #text in paragraph
-             p(tags$b("Overviews:"),"In 2017, there are more than ", tags$em("50,000", style = "color:blue"),
-               "on the street, and about", tags$em("75%", style = "color:blue"),"of homeless people are unsheltered.
-               "),
-             img(src = "homeless1.png", aligh = "left"),
-             p(tags$b("Project Goals:"), "Our goal is to measure the homeless density in the greater Los Angeles Area,
-               identify potential risks and health issues towards homeless people,
-               figure up the services provided by the governments and instituions,
-               and provide implantable recommendations for the city of Los Angeles on the homeless issues."),
-             
-             
-             img(src='homeless.png', width = 500, height = 300, align = "left"),
-             #leave some room here
-             br(),
-             tags$blockquote("Data Sets"),
-             theme = "bootstrap.css",
-             
-             
              fluidRow(
-               column(6, h3("Title in one row")),
-               column(6)
-               
-             ))),
+               br(),
+               column(6,
+                      p(tags$b("Overviews:"),"In 2017, there are more than ", tags$em("50,000", style = "color:blue"),
+                        "on the street in the LA County, and about", tags$em("75%", style = "color:blue"),"of homeless people are unsheltered.", 
+                        tags$em("2645", style = "color:blue"), "crimes was committed towards homeless people from Auguest 2016 to Auguest 2017, 
+                        and about", tags$em("30%", style = "color:blue"), "of the crimes are assulting with deadly weapon. 
+                        The increasing serverity of homeless density in the Los Angeles is partly because the increasing rents. In 2017, 
+                        the median price of 1B1B apartment is $1,997. The median rental price incresed 30% between 2000 and 2015, but the 
+                        median income did not change during this time."
+                        
+                      ),
+                      p(tags$b("Project Goals:"), "Our goal is to measure the",tags$em("homeless density",style = "color:blue"),"in the greater Los Angeles Area,
+               identify potential", tags$em("risks and health issues",style = "color:blue"), "towards homeless people,
+                            figure up the", tags$em("services", style = "color:blue"), "provided by the governments and instituions,
+                            and provide implantable", tags$em("recommendations", style = "color:blue"), "for the city of Los Angeles on the homeless issues.")),
+               column(6,img(src = "homeless1.png", width = "100%", height = "100%", aligh = "left"))),
+             br(),
+             br(),
+             fluidRow(
+               column(6,br(),img(src='homeless.png', width = "100%", height = "100%", align = "left"),
+                      h6("There is a great increase in unsheltered homeless people from 2015 - 2017, which results in the huge increase in total homeless people."),style = "color:grey"),
+               column(6, h3("Data Sets"), 
+                      br(),
+                     p("The data sets are provided by the city of Los Angeles,
+                                            and the data is collected in the Greater Los Angeles area.
+                                            The data included the 311 Calls, Crime Data, Shelter Data, Homeless Counts, and Tract maps."),
+                      p(tags$b("311 Calls:"), "Received 311 Calls from various Apps and Devices: Locations and Times."),
+                      p(tags$b("Crime Data:"), "Reported crimes towards homeless people in the Greater Los Angeles Area: Locations, Times and Crime Types"),
+                      p(tags$b("Shelter Data:"), "Shelter in Greater Los Angeles Area: Location, Types and Times "),
+                      p(tags$b("Homeless Count Data"), "Homeless count by tract and community: Location, Times, Family Numbers, with/without Youth, and Sheltered/Unsheltered ")))
+             
+             
+             
+             
+             )),
 
   navbarMenu("Data Analysis",
              
@@ -60,7 +73,7 @@ ui <- navbarPage(
                ) 
              ),
              fluidRow(
-               column(6, h5("Type insights here.")),
+               column(6, h4("Type insights here.")),
                column(6)
              )),
              
@@ -94,9 +107,20 @@ ui <- navbarPage(
                       br(),
                       br(),
                       br(),
-                   
-                      plotlyOutput("device311"),
-                        plotOutput("month311"))),
+                      column(6, plotlyOutput("device311")),
+                      column(6, h4("typeeee")),
+                      br(),
+                      br(),
+                      br()
+                      
+                      ),
+             fluidRow(
+               br(),
+               br(),
+               column(6,plotOutput("month311")),
+               column(6, h4("typeTTT"))
+             )
+             ),
              
              tabPanel("Crime Data", fluidPage(
                sidebarLayout(
@@ -124,25 +148,37 @@ ui <- navbarPage(
                            br(),
                            br(),
                            br(),
-                           br(),plotOutput("hour_crime"),
-                           column(6, h5("Type insights here.")),
-                           column(6)
-               )
-                
+                           br(),
+                           column(6, plotOutput("hour_crime")),
+                           column(6, h4("Type insights here.")
+                                  )
                ),
+               fluidRow(br(),
+                        br(),
+                        br(),
+                        br(),
+                        br(),
+                        br(),
+                        br(),
+                        br(),
+                        column(6,plotOutput("monthly_crime")),
+                        column(6,h4("Type insights here."))
+                
+               )),
 
              
              tabPanel("Shelter Data", 
                       fluidPage(
                  mainPanel(leafletOutput("shelter"),
-                           class = "panel panel-default",width = "100%", height = "100%"),##why no use!!!
+                           class = "panel panel-default",width = "100%", height = "100%"),
                 helpText("Zoom in and Zoom out to see more specific distributions of shelters")
              
              ),
              fluidRow(
-               column(6, h5("Type insights here.")),
+               column(6, h4("Type insights here.")),
                column(6)
-             ))),
+             ))
+             ),
   
   navbarMenu("Risk Measurement",
              tabPanel("Unsheltered Severity",
@@ -150,47 +186,28 @@ ui <- navbarPage(
             fluidPage(
               
                fluidRow(
-                 column(7,plotOutput("severetop", width = 1000, height = "400px")),
-                 column(5,absolutePanel(
-                   id ="unshelteredseverity",
-                   top = "auto", left = "auto", right = 50, bottom = "auto",
-                   width = 40, height = "auto",
-                   h4("type insights here11"))
+                 column(6,plotOutput("severetop", width = "100%", height = "400px")),
+                 column(6, plotOutput("mymap",width = "100%", height = "400px"))
               
-             )),
-             
+             ),
+            
              fluidRow(
-               column(7,plotOutput("mymap",width = 1000, height = "400px")),
-               column(5,
-                      absolutePanel(
-                        id ="unshelteredseverity",
-                        top = "auto", left = "auto", right = 50, bottom = "auto",
-                        width = 40, height = "auto",
-                        h4("type insights here33"))
-               ))
-             
-            ),
+              h4("type insights here122")
+              ),
+             br(),
+             br(),
+            
 
              fluidRow(
-               column(7,plotOutput("severebottom",width = 1000, height = "400px")),
-               column(5,absolutePanel(
-                 id ="unshelteredseverity",
-                 top = "auto", left = "auto", right = 50, bottom = "auto",
-                 width = 40, height = "auto",
-                 h4("type insights here122"))
-             )),
+               column(6,plotOutput("severebottom",width = "100%", height = "400px")),
+               column(6, plotOutput("decmap",width = "100%", height = "400px"))
+             ),
                
              fluidRow(
-               column(7,plotOutput("decmap",width = 1000, height = "400px")),
-               column(5,
-                  absolutePanel(
-                 id ="unshelteredseverity",
-                 top = "auto", left = "auto", right = 50, bottom = "auto",
-                 width = 40, height = "auto",
-                 h4("type insights here33"))
-                 ))
+              h4("type insights here122")
+                 )
              
-            )
+            ))
             ,
              
   
@@ -200,7 +217,7 @@ ui <- navbarPage(
                        ),
               helpText("Density = Total Homeless Population/ Area of District (Square Mile)"),
               fluidRow(
-                column(6, h5("Type insights here.")),
+                column(6, h4("Type insights here.")),
                 column(6)
             ))),
              
@@ -210,41 +227,36 @@ ui <- navbarPage(
                helpText("Density = Total Crime Number/ Total Homeless People"),
              
              fluidRow(
-               column(6, h5("Type insights here.")),
+               column(6, h4("Type insights here.")),
                column(6))))),
       
       tabPanel("Recommendations",
                fluidPage(
-                 br(),
-                 br(),
                  h3("Causes of Homeless:"),
                  p(tags$ul(
-                   tags$li("povery: lack of affordable housing"), 
-                   tags$li("mental illness:discharged from mental hospitals"), 
-                   tags$li("released from the criminal justice system"),
-                   tags$li("domestic violence"))
+                   tags$li("Povery: Lack of affordable housing"), 
+                   tags$li("Mental illness: Discharged from mental hospitals"), 
+                   tags$li("Released from the criminal justice system"),
+                   tags$li("Domestic violence"))
                  ),
                  h3("Recommendations:"),
-                 p("1. Build Affordable Housing:", tags$ul(tags$li("in high homeless density area"), tags$li("at publicly owned vacant properties"),
-                                                           tags$li("build more “tiny houses” for the homeless"))), 
-                 p("2. Build more shelters/ homeless services", tags$ul(tags$li("similar to current shelters/ services"), 
-                                                                        tags$li("imitate the operations/services/ success shelters 
-                                                                                                                                            and open branches in severe areas 
-                                                                                                                                            (identified by the data -- 
-                                                                                                                                            those area with greatest decrease 
-                                                                                                                                            in severity and look at their shelter services):focus on career training, job seeking, and mental issue consulting"))),
-                 p("3. Easier access to shelters and services", tags$ul(tags$li("only 16% of homeless people seek local services"),
-                                                                        tags$li("call center points at local stores (7-11,Walgreens, CVS, etc.)", 
-                                                                tags$ul(tags$li("provide homeless people with call services and application services to local shelters"),
-                                                                        tags$li("basic medical needs at local pharmacies at low charges (drugs for people suffering from depression,mental illness,etc.)"))))),
-                 p("4. Employment", tags$ul(tags$li("recruit people from previous success shelters to to help build new shelters(construction workers, administrative staff, etc.))",
-                                                    tags$li("Buddy Program: connect previous homeless people with new homeless people. People escaped from homeless can introduce job opportunities and way to combat to new homeless people. ")))
+                 p("To achieve the goal of reducing homelessness in LA by 50% by the year of 2020, our recommendation comes in two parts. First is to decrease the number of currently homeless people. Second is prevention."),
+                 p("1. Affordable Housings – \"Tiny Houses\"", tags$ul(tags$li("First way to decrease the number of currently homeless people is to build more affordable housing. 
+Areas with higher homeless density, severity, and crime rate according to the data should be given priority. In addition, on top of traditional permanent housing accommodations, we found there is a project called “tiny houses”. It’s a low-cost temporary housing that serves as a bridge between gutter and permanent housing. 
+                                                                               It has all the living necessities inside and can greatly reduce health and crime risks for the homeless."))), 
+                 p("2. Branches for Successful Shelters – Focus on Career Training", tags$ul(tags$li("Second way to decrease the number homeless is to provide more Shelter and Services. Similarly, they should be built in the most severe areas as identified by the data. We recommend opening more branches of existing successful shelters. For example, the Union Station Homeless Service in Pasadena helped reduce homeless in the city by 54% since 2009. The shelters should be more focused on career training, job seeking, and mental consultation, instead of merely providing a place to sleep.
+"))),
+                 p("3. Easier Accesses to Shelters and Services", tags$ul(tags$li("With more facilities in place, we also need to have easier access to the services. Currently, only 16% of homeless people seek local services. This low ratio is largely due to difficult access to services. We recommend setting up service points at local stores such as 7-11, Walgreen, and CVS. The service points should provide free calling service to local shelter, easy application process to shelters, basic drugs for those in need, consultation service for mental issues, and report for crimes and dangers.
+"))),
+                 p("4. Employment Programs", tags$ul(tags$li("Since the majority of homelessness is caused by unemployment, we recommend setting up better employment programs to help the homeless better seek a job. First, we can recruit people who previously graduated from successful shelter to build new shelters in the severe areas. Depending on their individual skills, they can be hired as construction workers, administrative staff, cooks, or teachers. Second, we suggest initiating a “Buddy Program” to connect previous homeless people with new homeless people. People escaped from homeless can introduce job opportunities, provide mental support, and teach ways to combat homelessness and poverty.
+"))),
+                   
+                   p("5. Homeless Prevention", tags$ul(tags$li("The second part of our recommendation is prevention. Currently, 25% of single adult homeless suffer from mental illness, and 20% of people released from incarceration go to the street. The news and public has concluded that people released from mental hospitals and prisons without proper accommodations are a huge cause for homelessness. Therefore, we recommend forming better connection between mental hospitals and local homeless services, as well as between jails and homeless services. It can prevent mentally-ill people released from hospitals from going on the street, as well as those released from the prison. Since they usually need to readjust to lives outside of the hospital and prison, they can spend time in shelter services to acquire the basic skills necessary for employment.
+")))
                    
                    
                    
-                   
-                 ))
-      ))
+                 )))
 
 
 
@@ -404,7 +416,7 @@ server <- function(input, output, session){
       labs(x = "Month",y = "Number", title = "Number of 311 calls by Month")+
       theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
             panel.background= element_blank(), axis.line = element_line(colour = "black"))+
-      theme(plot.title = element_text(face = "bold",size = 18))+
+      theme(plot.title = element_text(face = "bold",size = 26, hjust = 0.5))+
       theme(axis.title = element_text(size = 14))
   })
   
@@ -816,7 +828,9 @@ server <- function(input, output, session){
       theme(axis.title = element_text(size = 14))
   })
   
+output$monthly_crime <-  renderPlot({
   
+})
   
   }
   
