@@ -22,6 +22,7 @@ data_census17_tract = read_excel("la_city_independent_analysis/data/homeless-cou
 data_census17_community = read_excel("la_city_independent_analysis/data/homeless-count-2017-results-by-census-tract.xlsx",
                                      sheet = "Count_by_Community")
 
+total_commu = data_census17_tract
 community_map = readOGR("CnclDist_July2012/CnclDist_July2012.shp")
 community_map1 = spTransform(community_map, CRS("+proj=longlat +datum=WGS84"))
 community_map = fortify(community_map1, region = "DISTRICT")
@@ -34,7 +35,7 @@ tract_map$id = as.numeric(tract_map$id)
 total_commu$CD = as.character(total_commu$CD)
 communitymap$DISTRICT = as.character(communitymap$DISTRICT)
 data_census17_tract$CD = as.character(data_census17_tract$CD)
-communitymap$SQ_MI = as.numeric(communitymap$SQ_MI)
+communitymap$SQ_MI = as.numeric(as.character(communitymap$SQ_MI))
 total_commu$CD = as.character(total_commu$CD)
 
 polyFunc<-function(groupname, dat){
@@ -112,6 +113,11 @@ data_311$Week = week(data_311$CREATEDDATE)
            "2017_perc" = unsheltered_perc_17,
            "2017_num" = unsheltered_num_17)
 
+  severityDecTop10 = unsheltered_severity%>%
+    arrange(changeInSeverity)%>%
+    slice(1:10)%>%
+    mutate(decrease = changeInSeverity*-1)
+  
   shelter_count = data_shelter %>%
     group_by(CITY)%>%
     summarise(num_shelter = n())
@@ -135,6 +141,15 @@ data_311$Week = week(data_311$CREATEDDATE)
 
   
 
+ 
+ 
+ total_commu = data_census17_tract %>%
+   group_by(CD) %>%
+   summarise(Number = sum(totPeople)) %>%
+   left_join(communitymap,
+             by = c("CD" = "DISTRICT")) %>%
+   mutate(Density = Number/SQ_MI) %>%
+   arrange(-Density)
 
 
 

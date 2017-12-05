@@ -236,8 +236,7 @@ ui <-navbarPage(
                  p(tags$ul(
                    tags$li("Povery: Lack of affordable housing"), 
                    tags$li("Mental illness: Discharged from mental hospitals"), 
-                   tags$li("Released from the criminal justice system"),
-                   tags$li("Domestic violence"))
+                   tags$li("Released from the criminal justice system"))
                  ),
                  h3("Recommendations:"),
                  p("To achieve the goal of reducing homelessness in LA by 50% by the year of 2020, our recommendation comes in two parts. First is to decrease the number of currently homeless people. Second is prevention."),
@@ -573,7 +572,7 @@ server <- function(input, output, session){
   
   communitymap$DISTRICT = as.character(communitymap$DISTRICT)
   data_census17_tract$CD = as.character(data_census17_tract$CD)
-  communitymap$SQ_MI = as.numeric(communitymap$SQ_MI)
+  communitymap$SQ_MI = as.numeric(as.character(communitymap$SQ_MI))
   total_commu$CD = as.character(total_commu$CD)
   total_commu = data_census17_tract %>%
     group_by(CD) %>%
